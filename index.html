@@ -1,0 +1,175 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+         body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #B9FFC4;
+}
+
+.container {
+    text-align: center;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.status {
+    margin-bottom: 20px;
+    font-size: 18px;
+    color: #555;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-gap: 5px;
+    margin-bottom: 20px;
+}
+
+.cell {
+    width: 100px;
+    height: 100px;
+    background-color: #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.cell:hover {
+    background-color: #ddd;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tic-Tac-Toe</h1>
+        <div class="status">
+            <p>Player X's Turn</p>
+            <p>Player X Score: <span id="playerX-score">0</span></p>
+            <p>Player O Score: <span id="playerO-score">0</span></p>
+        </div>
+        <div class="board">
+            <div class="cell" id="cell-0"></div>
+            <div class="cell" id="cell-1"></div>
+            <div class="cell" id="cell-2"></div>
+            <div class="cell" id="cell-3"></div>
+            <div class="cell" id="cell-4"></div>
+            <div class="cell" id="cell-5"></div>
+            <div class="cell" id="cell-6"></div>
+            <div class="cell" id="cell-7"></div>
+            <div class="cell" id="cell-8"></div>
+        </div>
+        <button id="restart-btn">Restart Game</button>
+    </div>
+    <script>
+          document.addEventListener("DOMContentLoaded", () => {
+    const cells = document.querySelectorAll(".cell");
+    const restartBtn = document.getElementById("restart-btn");
+    const playerXScoreDisplay = document.getElementById("playerX-score");
+    const playerOScoreDisplay = document.getElementById("playerO-score");
+    const statusDisplay = document.querySelector(".status");
+    let currentPlayer = "X";
+    let playerXScore = 0;
+    let playerOScore = 0;
+    let gameOver = false;
+
+    updateStatus();
+
+    cells.forEach(cell => {
+        cell.addEventListener("click", () => {
+            if (!cell.textContent && !gameOver) {
+                cell.textContent = currentPlayer;
+                if (checkWin()) {
+                    updateScore();
+                    updateStatus(`${currentPlayer} wins!`);
+                    gameOver = true;
+                } else if (checkDraw()) {
+                    updateStatus("It's a draw!");
+                    gameOver = true;
+                } else {
+                    currentPlayer = currentPlayer === "X" ? "O" : "X";
+                    updateStatus();
+                }
+            }
+        });
+    });
+
+    restartBtn.addEventListener("click", () => {
+        cells.forEach(cell => {
+            cell.textContent = "";
+        });
+        currentPlayer = "X";
+        gameOver = false;
+        updateStatus();
+    });
+
+    function updateStatus(message = "") {
+        if (!message) {
+            statusDisplay.textContent = `Player ${currentPlayer}'s Turn`;
+        } else {
+            statusDisplay.textContent = message;
+        }
+    }
+
+    function updateScore() {
+        if (currentPlayer === "X") {
+            playerXScore++;
+            playerXScoreDisplay.textContent = playerXScore;
+        } else {
+            playerOScore++;
+            playerOScoreDisplay.textContent = playerOScore;
+        }
+    }
+
+    function checkWin() {
+        const winPatterns = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+            [0, 4, 8], [2, 4, 6] // diagonals
+        ];
+        return winPatterns.some(pattern => {
+            const [a, b, c] = pattern;
+            return cells[a].textContent && cells[a].textContent === cells[b].textContent && cells[b].textContent === cells[c].textContent;
+        });
+    }
+
+    function checkDraw() {
+        return [...cells].every(cell => cell.textContent);
+    }
+});
+    </script>
+</body>
+</html>
